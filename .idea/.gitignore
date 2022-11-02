@@ -1,0 +1,10 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+/kotlinc.xml
+/misc.xml
+/vcs.xml
+/modules.xml
+/libraries
+**/comp_sec.iml
+**/out
