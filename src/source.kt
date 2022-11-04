@@ -1,16 +1,9 @@
 import java.io.FileInputStream
 
-fun main(){
-    val str: FileInputStream = FileInputStream("text.txt")
-
-    val arr: Array<Int> = arrayOf(1,2,3,4,5,6)
-    //var aa = Lexer(str)
-    //println("${aa.iterator().next().pos_x} ${aa.iterator().next().pos_y} ${aa.iterator().next().type} ${aa.iterator().next().value}")
-
-    for (i in Lexer(str)){
-        println("${i.pos_x}\t${i.pos_y}\t${i.type}\t${i.value}")
+fun main(args: Array<String>){
+    if (args.indexOf("-lex") != -1){
+        lex_analys(args[1])
     }
-
 }
 
 fun testing(dir: String){
@@ -39,8 +32,12 @@ fun testing(dir: String){
             println("$i - FALSE")
         }
         i++
-        //println(buffer1)
-        //println(buffer2+"\n")
-        //println("------------------------------------------\n")
+    }
+}
+
+fun lex_analys(_name: String){
+    val str: FileInputStream = FileInputStream(_name)
+    for (i in Lexer(str)){
+        println("${i.pos_x}\t${i.pos_y}\t${i.type}\t${i.value}")
     }
 }
