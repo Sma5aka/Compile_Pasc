@@ -10,20 +10,20 @@ public class Lexer (val stream: FileInputStream): Iterable<Lexem> {
 
     class Iterator<T>(_stream: FileInputStream) : kotlin.collections.Iterator<Lexem> {
 
-        private enum class States { START, FINAL, NUM, COMM, ERR, ID, STRL, ASGN, END }
+        private enum class States { START, FINAL, NUM, COMM, ERR, ID, STRL, ASGN, END, NUMM }
 
         private val KWords: Array<String> = arrayOf("program", "var", "integer", "real",
                 "bool", "begin"/*, "end", "end."*/, "if", "then", "else", "while", "do",
                 "read", "write", "true", "false")
         private val Delimers: Array<Char> = arrayOf(',', '.', ';', '(', ')')
-        private val Operators: Array<Char> = arrayOf('+', '-', '=', '*', '/', '<', '>')
+        private val Operators: Array<Char> = arrayOf('+', '-', '=', '*', '/', '<', '>', ':')
 
         private var buffer: String = ""
-        private var n_line = 1
-        private var n_el = 1
-        private var r_type = ""
-        private var r_val = ""
-
+        private var n_line: Int = 1
+        private var n_el: Int = 1
+        private var r_type: String = ""
+        private var r_val: String = ""
+        private var r_val_num: Int = 0
 
         private var state: States = States.START
 
@@ -40,7 +40,7 @@ public class Lexer (val stream: FileInputStream): Iterable<Lexem> {
 
         override fun next(): Lexem {
             var chr: Int = nxtchr
-
+            r_val_num = 0
             state = States.START
             while (state != States.FINAL) {
                 when (state) {
@@ -79,20 +79,13 @@ public class Lexer (val stream: FileInputStream): Iterable<Lexem> {
                             n_el++
                             buffer = ""
                             buffer += chr.toChar()
-                            state = States.FINAL
-                            r_type = "Operator"
-                            r_val = buffer
-                        } else if (chr.toChar() == ':') {
-                            n_el++
-                            buffer = ""
-                            buffer += chr.toChar()
                             state = States.ASGN
                             stream.read().also { chr = it }
                         } else if (chr.toChar().isDigit()) {
                             n_el++
                             buffer = ""
                             buffer += chr.toChar()
-                            state = States.NUM
+                            state = States.NUMM
                             stream.read().also { chr = it }
                         } else {
                             n_el++
@@ -158,19 +151,21 @@ public class Lexer (val stream: FileInputStream): Iterable<Lexem> {
                     }
 
                     States.ASGN -> {
-                        buffer += chr.toChar()
-                        if (buffer == ":="){
+                        if (':' in buffer && chr.toChar() == '='){
                             n_el++
+                            buffer += chr.toChar()
                             r_type = "Operator"
                             r_val = buffer
                             state = States.FINAL
                         } else {
-                            n_el++              // При вводе двух двоеточий подряд не читается ни одно
-                            state = States.START
+                            n_el++
+                            state = States.FINAL
+                            r_type = "Operator"
+                            r_val = buffer
                         }
                     }
 
-                    States.NUM -> {
+                    States.NUM -> {                     // На данный момент не используется другой способ обработки чисел
                         if (chr.toChar().isDigit()){
                             n_el++
                             buffer += chr.toChar()
@@ -203,8 +198,25 @@ public class Lexer (val stream: FileInputStream): Iterable<Lexem> {
                         }
                     }
 
+                    States.NUMM -> {
+                        if (chr.toChar().isDigit()){
+                            buffer += chr.toChar()
+                            r_val_num = r_val_num * 10 + (chr.toChar()-'0')
+                            stream.read().also { chr = it }
+                        } else {
+                            n_el++
+                            buffer += chr.toChar()
+                            state = States.FINAL
+                            r_type = "Digit"
+                            r_val = r_val_num.toString()
+                        }
+                    }
+
                     else -> {
-                        println("ELSE STATES WAS CALLED")
+                        buffer = ""
+                        state = States.FINAL
+                        r_type = "Epty_File"
+                        r_val = buffer
                     }
                 }
 
