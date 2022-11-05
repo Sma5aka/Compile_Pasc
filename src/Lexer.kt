@@ -13,7 +13,7 @@ public class Lexer (val stream: FileInputStream): Iterable<Lexem> {
         private enum class States { START, FINAL, NUM, COMM, ERR, ID, STRL, ASGN, END, NUMM }
 
         private val KWords: Array<String> = arrayOf("program", "var", "integer", "real",
-                "bool", "begin"/*, "end", "end."*/, "if", "then", "else", "while", "do",
+                "bool", "begin", "if", "then", "else", "while", "do",
                 "read", "write", "true", "false")
         private val Delimers: Array<Char> = arrayOf(',', '.', ';', '(', ')')
         private val Operators: Array<Char> = arrayOf('+', '-', '=', '*', '/', '<', '>', ':')

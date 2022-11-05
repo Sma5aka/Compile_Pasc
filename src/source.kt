@@ -1,3 +1,4 @@
+import java.io.File
 import java.io.FileInputStream
 
 fun main(args: Array<String>){
@@ -16,8 +17,8 @@ fun testing(dir: String){
         var buffer1: String = ""
         var buffer2: String = ""
 
-        reader1 = FileInputStream(dir+"\\inout\\0$i.out")
-        reader2 = FileInputStream(dir+"\\answ\\0$i.txt")
+        reader1 = FileInputStream(dir+"\\inout\\$i.out")
+        reader2 = FileInputStream(dir+"\\answ\\$i.txt")
         var iter: Int
         while (reader1.read().also { iter = it } != -1) {
             buffer1 += iter.toChar()
@@ -37,7 +38,10 @@ fun testing(dir: String){
 
 fun lex_analys(_name: String){
     val str: FileInputStream = FileInputStream(_name)
+    var cname: Int = 1
     for (i in Lexer(str)){
-        println("${i.pos_x}\t${i.pos_y}\t${i.type}\t${i.value}")
+        val output: File = File("tests/inout/${cname}.out")
+        output.writeText("${i.pos_x}\t${i.pos_y}\t${i.type}\t${i.value}")
+        //println("${i.pos_x}\t${i.pos_y}\t${i.type}\t${i.value}")
     }
 }
