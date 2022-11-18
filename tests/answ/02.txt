@@ -1,4 +1,0 @@
-1 1 	identifier hello
-1 7		identifier world
-1 13 	splitter (
-1 14	splitter )
