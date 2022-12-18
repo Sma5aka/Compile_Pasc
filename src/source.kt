@@ -14,9 +14,9 @@ fun main(args: Array<String>){
     print(Lexems)
     //val lexer: Lexer = Lexer(str)
 
-    var parser: Parser = Parser(str, Lexems)
+    /*var parser: Parser = Parser(str, Lexems)
     var e = parser.ParseExpression()
-    print(e)
+    print(e)*/
 }
 
 fun lex_analys(_name: String, _fname: String) {
